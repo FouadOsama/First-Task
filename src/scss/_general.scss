@@ -1,0 +1,98 @@
+@import "./variables";
+
+.error-msg {
+  color: red;
+  margin: 5px 0;
+}
+
+hr {
+  background-color: grey;
+  margin: 20px 0 12px 0;
+}
+
+p {
+  margin: 0;
+}
+
+.w-max-content {
+  width: max-content;
+}
+
+.h-max-content {
+  height: max-content;
+}
+
+.wrapper-bg {
+  background-color: white;
+  padding: 40px 30px;
+  border-radius: 16px;
+}
+
+.error-border {
+  border: 2px solid red !important;
+}
+
+.err {
+  color: red;
+}
+
+.err-asterisk {
+  color: red;
+}
+
+.opacity_7 {
+  opacity: 0.7;
+}
+
+.opacity-6 {
+  opacity: 0.6;
+}
+
+.pointer {
+  cursor: pointer;
+}
+
+.not-allowed {
+  cursor: not-allowed !important;
+}
+
+.content-wrapper {
+  background-color: white;
+  margin: 2.071rem;
+}
+
+.text-underline {
+  text-decoration: underline !important;
+}
+
+.border-bottom {
+  border-bottom: 1px solid #ccc;
+}
+
+.error-color {
+  color: $danger !important;
+}
+
+.warning-color {
+  color: $warning !important;
+}
+
+.primary-color {
+  color: $primary !important;
+}
+
+.secondary-color {
+  color: $secondary !important;
+}
+
+.label-color {
+  color: rgba(0, 0, 0, 0.6);
+}
+
+// .css-batk84-MuiInputBase-root-MuiFilledInput-root::before {
+//   border-bottom: none !important;
+// }
+
+// .css-c5v1qu-MuiInputBase-input-MuiFilledInput-input {
+//   padding: 8px !important;
+// }

@@ -1,0 +1,30 @@
+.App {
+    height: 100vh;
+    display: flex;
+    background-color: darkgrey;
+
+    .left-side {
+        background-color: lightgray;
+        padding: 20px;
+
+        a {
+            text-decoration: none;
+            display: inline-block;
+            margin-bottom: 10px;
+        }
+    }
+
+    .right-side {
+        background-color: white;
+        width: 100%;
+
+        nav {
+            background-color: lightblue;
+            padding: 20px;
+        }
+
+        div {
+            padding: 20px;
+        }
+    }
+}
