@@ -1,50 +1,31 @@
 import React from "react";
-import { FormControl, Button } from "@mui/material";
+import { FormControl, Button, Autocomplete, TextField } from "@mui/material";
 
 import Input from "../../components/Input/index.tsx";
 import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
 import { useState } from "react";
 import InputLabel from "@mui/material/InputLabel";
-import { Formik, Form, ErrorMessage } from "formik";
+import { Formik, Form, ErrorMessage, Field } from "formik";
 import * as Yup from "yup";
-import { Navigate, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { DatePicker } from "@mui/x-date-pickers";
-import "./home.scss";
 import Btn from "../../components/Button/index.tsx";
 import { grey } from "@mui/material/colors";
 import Stack from "@mui/material/Stack";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
-import { useEffect } from 'react';
+import "./AddBook.scss";
+import { ROUTE_PATHS } from "../../utils/RoutePaths.ts";
 
-const Home = (): JSX.Element => {
-  // const [selectedDate, setSelectedDate] = React.useState(new Date());
-
-  const [selectedValue, setSelectedValue] = React.useState("");
-  const [category, setCategory] = React.useState("");
+const AddBook = (): JSX.Element => {
   const navigate = useNavigate();
+  // const [selectedDate, setSelectedDate] = React.useState(new Date());
+  const catogeries = ["Action", "Drama", "Romance"];
 
-  // useEffect(() => {
-  //   // Your navigation logic here
-  //   navigate('/Book');
-  // }, []);
+  const [selectedValue, setSelectedValue] = useState("");
+  const [category, setCategory] = useState(catogeries[0]);
 
   const [selectedFile, setSelectedFile] = useState(null);
-  const Navigate = useNavigate();
-
-
-
-
-  const handleButton = () => {
-    navigate('/Book');
-    
-  };
-  
-
-  const handleFileChange = (event) => {
-    setSelectedFile(event.target.files[0]);
-    console.log("Uploading file:", event.target.files[0]);
-  };
 
   const initialValues = {
     title: "",
@@ -55,6 +36,14 @@ const Home = (): JSX.Element => {
     edition: "",
     es: "",
     brief: "",
+    date: null,
+  };
+
+  const existingData = JSON.parse(localStorage.getItem("books") || "[]") || [];
+
+  const handleFileChange = (event) => {
+    setSelectedFile(event.target.files[0]);
+    console.log(event.target.files[0]);
   };
 
   const validationSchema = Yup.object().shape({
@@ -75,19 +64,16 @@ const Home = (): JSX.Element => {
         }
         return value.replace(/-/g, "").length === 13;
       }),
-    price: Yup.string()
-      .required("Number is required")
-      // .test("precision", "Number must have 2 decimal places", (value) => {
-      //   if (value === undefined) {
-      //     return true; // Allow undefined values
-      //   }
-      //   return value.toFixed(2) === value.toString();
-      // }),
+    price: Yup.string().required("Number is required"),
+    // .test("precision", "Number must have 2 decimal places", (value) => {
+    //   if (value === undefined) {
+    //     return true; // Allow undefined values
+    //   }
+    //   return value.toFixed(2) === value.toString();
+    // }),
   });
 
-  const handleSubmit = (values,) => {
-    console.log("Form submitted:", values);
-    // setSubmitting(true);
+  const handleSubmit = (values) => {
     const addBook = {
       title: values.title,
       author: values.author,
@@ -98,10 +84,14 @@ const Home = (): JSX.Element => {
       edition: values.edition,
       esbn: values.es,
       brief: values.brief,
+      date: values.date,
     };
-    localStorage.setItem("user", JSON.stringify(addBook));
-    // setSubmitting(false);
-    // Navigate("/login");
+
+    if (selectedFile) addBook["coverPhoto"] = URL.createObjectURL(selectedFile);
+    existingData.push(addBook);
+
+    localStorage.setItem("books", JSON.stringify(existingData));
+    navigate(ROUTE_PATHS["booksList"]);
   };
 
   // const handleChange = (event) => {
@@ -117,59 +107,114 @@ const Home = (): JSX.Element => {
           validationSchema={validationSchema}
           onSubmit={handleSubmit}
         >
-          {({ isSubmitting, values, errors, handleChange }) => (
+          {({
+            isSubmitting,
+            values,
+            errors,
+            handleChange,
+            setFieldValue,
+            setFieldTouched,
+            touched,
+          }) => (
             <Form className="grid grid-cols-4">
               <div className="col-span-2">
                 <Input
                   placeholder="Book Title"
+                  wrapperClassName="my-5"
                   value={values.title}
                   type="text"
                   name="title"
-                  wrapperClassName=""
-                  onChange={handleChange}
-                  error={errors.title}
+                  onChange={(e) => {
+                    setFieldTouched("title");
+                    setFieldValue("title", e.target.value);
+                  }}
+                  error={touched["title"] ? errors.title : ""}
                 />
 
                 <Input
                   placeholder="Book Author"
                   value={values.author}
                   type="text"
-                  name="author"
                   wrapperClassName="my-5"
-                  onChange={handleChange}
-                  error={errors.author}
-
+                  name="author"
+                  onChange={(e) => {
+                    setFieldTouched("author");
+                    setFieldValue("author", e.target.value);
+                  }}
+                  error={touched["author"] ? errors.author : ""}
                 />
 
-                <FormControl fullWidth size="small">
-                  <InputLabel id="demo-simple-select-label">
+                {/* <FormControl fullWidth size="small"> */}
+                {/* <InputLabel id="demo-simple-select-label">
                     Catogeries
-                  </InputLabel>
-                  <Select
+                  </InputLabel> */}
+
+                {/* <Field name="category" as={Select} >
+                    {({ field }) => (
+                      <Select {...field} className="w-full !bg-inputBg">
+                        <MenuItem value="option1">Option 1</MenuItem>
+                        <MenuItem value="option2">Option 2</MenuItem>
+                        <MenuItem value="option3">Option 3</MenuItem>
+                      </Select>
+                    )}
+                  </Field> */}
+
+                {/* <Select
                     className="w-full !bg-inputBg"
                     labelId="demo-simple-select-label"
-                    placeholder="Catogeries"
-                    name="category"
+                    // placeholder="Catogeries"
                     id="demo-simple-select"
-                    value={category}
                     label="Catogeries"
-                    onChange={(e) => setCategory(e.target.value)}
+                    name="category"
+                    value={values.category}
+                    onChange={(e) => {
+                      console.log(e.target.value);
+                      setFieldTouched("category");
+                      setFieldValue("category", e.target.value);
+                    }}
                   >
-                    <MenuItem value={10}>Ten</MenuItem>
-                    <MenuItem value={20}>Twenty</MenuItem>
-                    <MenuItem value={30}>Thirty</MenuItem>
+                    <MenuItem value="10">Ten</MenuItem>
+                    <MenuItem value="20">Twenty</MenuItem>
+                    <MenuItem value="30">Thirty</MenuItem>
                   </Select>
-                </FormControl>
-                <p>{errors.category}</p>
-
+                </FormControl> */}
+                <div className="w-full">
+                  <Autocomplete
+                    className="w-full"
+                    disablePortal
+                    options={catogeries}
+                    sx={{ width: 300 }}
+                    size="small"
+                    value={values.category}
+                    onChange={(e, newValue) => {
+                      setCategory(newValue!);
+                      setFieldTouched("category");
+                      setFieldValue("category", newValue);
+                    }}
+                    inputValue={values.category}
+                    onInputChange={(event, newInputValue) => {
+                      setFieldTouched("category");
+                      setFieldValue("category", newInputValue);
+                    }}
+                    renderInput={(params) => (
+                      <TextField {...params} label="Categories" />
+                    )}
+                  />
+                  {/* <p className="text-danger">
+                  {touched["category"] ? errors.category : ""}
+                </p> */}
+                </div>
                 <Input
                   placeholder="Book Price"
                   value={values.price}
                   type="number"
                   name="price"
                   wrapperClassName="my-5"
-                  onChange={handleChange}
-                  error={errors.price}
+                  onChange={(e) => {
+                    setFieldTouched("price");
+                    setFieldValue("price", e.target.value);
+                  }}
+                  error={touched["price"] ? errors.price : ""}
                 />
 
                 <Input
@@ -178,9 +223,11 @@ const Home = (): JSX.Element => {
                   type="text"
                   name="version"
                   wrapperClassName="my-5"
-                  onChange={handleChange}
-                  error={errors.version}
-
+                  onChange={(e) => {
+                    setFieldTouched("version");
+                    setFieldValue("version", e.target.value);
+                  }}
+                  error={touched["version"] ? errors.version : ""}
                 />
 
                 <FormControl fullWidth size="small">
@@ -202,8 +249,7 @@ const Home = (): JSX.Element => {
                     <MenuItem value={30}>Thirty</MenuItem>
                   </Select>
                 </FormControl>
-                {/* <p>{errors.older}</p> */}
-
+                {/* <p className="text-danger">{errors.older}</p> */}
 
                 <Input
                   placeholder="Book Edition"
@@ -211,9 +257,11 @@ const Home = (): JSX.Element => {
                   type="text"
                   name="edition"
                   wrapperClassName="my-5"
-                  onChange={handleChange}
-                  error={errors.edition}
-
+                  onChange={(e) => {
+                    setFieldTouched("edition");
+                    setFieldValue("edition", e.target.value);
+                  }}
+                  error={touched["edition"] ? errors.edition : ""}
                 />
 
                 <Input
@@ -222,19 +270,26 @@ const Home = (): JSX.Element => {
                   type="text"
                   name="es"
                   wrapperClassName="my-5"
-                  onChange={handleChange}
-                  error={errors.es}
-
+                  onChange={(e) => {
+                    setFieldTouched("es");
+                    setFieldValue("es", e.target.value);
+                  }}
+                  error={touched["es"] ? errors.es : ""}
                 />
 
-                {/* <DatePicker
+                <DatePicker
                   label="Basic date picker"
+                  value={values.date}
+                  onChange={(newValue) => {
+                    setFieldTouched("date");
+                    setFieldValue("date", newValue);
+                  }}
                   sx={{
                     ".MuiTextField-root": {
                       width: "100%",
                     },
                   }}
-                /> */}
+                />
               </div>
 
               {/* </div> */}
@@ -267,11 +322,14 @@ const Home = (): JSX.Element => {
                     multiline={true}
                     rows={4}
                     maxLength={800}
-                    onChange={handleChange}
                     value={values.brief}
                     name="brief"
                     wrapperClassName="rounded-xl"
-                    error={errors.brief}
+                    onChange={(e) => {
+                      setFieldTouched("brief");
+                      setFieldValue("brief", e.target.value);
+                    }}
+                    error={touched["brief"] ? errors.brief : ""}
                   />
 
                   <div className="flex justify-end mt-6">
@@ -282,19 +340,16 @@ const Home = (): JSX.Element => {
                       size="small"
                       text="Cancel"
                       type="button"
-                      // onChange={handleChange}
+                      handleClick={() => navigate(ROUTE_PATHS.booksList)}
                     />
                     <Btn
-                      type="button"
-                       handleClick={() => handleSubmit(values)}
-                      // onChange={handleChange}
+                      type="submit"
                       disabled={isSubmitting}
                       color="primary"
                       variant="contained"
                       size="small"
                       wrapperClassName=""
                       text="Save"
-                      //
                     />
                   </div>
                 </div>
@@ -303,23 +358,8 @@ const Home = (): JSX.Element => {
           )}
         </Formik>
       </div>
-      <div className="">
-        <Btn
-    //  type="submit"
-    //  handleClick={() => handleSubmit(Navigate("/Book"))}
-    onClick={handleButton}
-    // onChange={Navigate("/Book")}
-    // onChange={handleChange}
-    // disabled={isSubmitting}
-    color="primary"
-    variant="contained"
-    size="small"
-    wrapperClassName=""
-    text="ADD book"
-        />
-      </div>
     </div>
   );
 };
 
-export default Home;
+export default AddBook;

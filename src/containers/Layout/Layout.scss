@@ -4,8 +4,8 @@
     background-color: darkgrey;
 
     .left-side {
-        background-color: lightgray;
-        padding: 20px;
+        background-color: white;
+        // padding: 20px;
 
         a {
             text-decoration: none;
@@ -19,12 +19,12 @@
         width: 100%;
 
         nav {
-            background-color: lightblue;
+            background-color: white;
             padding: 20px;
         }
 
-        div {
-            padding: 20px;
-        }
+        // div {
+        //     // padding: 20px;/
+        // }
     }
 }

@@ -1,0 +1,18 @@
+.MuiFormControl-root .MuiTextField-root {
+    width: 100% !important;
+}
+
+.css-1d3z3hw-MuiOutlinedInput-notchedOutline {
+    border: none !important;
+    @apply bg-inputBg #{!important};
+}
+
+.css-nxo287-MuiInputBase-input-MuiOutlinedInput-input {
+    padding: 8px;
+}
+
+
+
+.button-upload {
+    background-color: red($color: #000000);
+}

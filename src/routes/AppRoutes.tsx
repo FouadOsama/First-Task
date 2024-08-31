@@ -1,43 +1,50 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
 import Layout from "../containers/Layout/Layout.tsx";
-import Login from "../containers/Auth/Login/Login.tsx";
-import Home from "../containers/Home/Home.tsx";
-import Employees from "../containers/Employees/Employees.tsx";
-import UsersList from "../containers/Users/usersList.tsx";
 import { ROUTE_PATHS } from "../utils/RoutePaths.ts";
+import Login from "../containers/Auth/Login/Login.tsx";
+import AddBook from "../containers/AddBook/AddBook.tsx";
+import ListBooks from "../containers/ListBooks/ListBooks.tsx";
 
 const AppRoutes = () => {
-  const data = localStorage.getItem('user');
-  let isAuth = data ? true : false;
+  // const data = localStorage.getItem('user');
+  const [isAuth, setIsAuth] = useState(false);
+
+  useEffect(() => {
+    setIsAuth(localStorage.getItem("user") ? true : false);
+    console.log(isAuth);
+  }, [isAuth]);
 
   return (
     <BrowserRouter>
       <Routes>
         <Route
-          path={ROUTE_PATHS.login}
-          element={!isAuth ? <Login /> : <Navigate to={ROUTE_PATHS.home} />}
-        />
-
-        <Route
-          element={isAuth ? <Layout /> : <Navigate to={ROUTE_PATHS.login} />}
+          element={
+            !isAuth ? (
+              <Login />
+            ) : (
+              <Navigate to={ROUTE_PATHS.booksList} replace />
+            )
+          }
         >
-
-          <Route path={ROUTE_PATHS.home}>
-            <Route index element={<Home />} />
-          </Route>
-
-          <Route path={ROUTE_PATHS.users}>
-            <Route index element={<UsersList />} />
-          </Route>
-
-          <Route path={ROUTE_PATHS.employees}>
-            <Route index element={<Employees />} />
-          </Route>
+          <Route index path={ROUTE_PATHS.login} element={<Login />} />
         </Route>
 
-        <Route path={"*"} element={<Navigate to={ROUTE_PATHS.home} />} />
+        <Route
+          element={
+            isAuth ? <Layout /> : <Navigate to={ROUTE_PATHS.login} replace />
+          }
+        >
+          <Route path={ROUTE_PATHS.booksList}>
+            <Route index element={<ListBooks />} />
+          </Route>
+
+          <Route path={ROUTE_PATHS.addBook}>
+            <Route index element={<AddBook />} />
+          </Route>
+          <Route path={"*"} element={<Navigate to={ROUTE_PATHS.booksList} />} />
+        </Route>
       </Routes>
     </BrowserRouter>
   );
